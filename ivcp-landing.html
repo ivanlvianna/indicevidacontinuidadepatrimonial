@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IVCP™ · O que você construiu expressa o que você acredita?</title>
+<meta name="description" content="O Índice VIDA de Coerência Patrimonial mede o gap entre sua orientação existencial e o que você efetivamente construiu. Diagnóstico individual com Ivan Vianna CFP®.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --v: #1A3C2E;
+  --vm: #2E5C46;
+  --vc: #3d7a5a;
+  --d: #f8e38c;
+  --de: #d7ae4d;
+  --dm: #e8c85a;
+  --b: #FAFAF6;
+  --t: #1a1a16;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+body {
+  background: var(--v);
+  color: #FFFFFF;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 0 5rem;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 85% 20%, rgba(248,227,140,.07) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 70% at 5% 85%, rgba(46,92,70,.6) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26,60,46,.3) 0%, transparent 70%);
+}
+
+/* linha vertical decorativa */
+.hero::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, transparent, var(--de) 30%, var(--d) 70%, transparent);
+}
+
+.w {
+  position: relative; z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  width: 100%;
+}
+
+.w-wide {
+  position: relative; z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  width: 100%;
+}
+
+/* BADGE */
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--de);
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.badge::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--de);
+}
+
+/* HERO HEADLINE */
+.hero-pre {
+  font-size: clamp(16px, 2vw, 20px);
+  color: rgba(255,255,255,.55);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.hero-h1 {
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 300;
+  line-height: 1.1;
+  color: #FFFFFF;
+  margin-bottom: .4rem;
+}
+
+.hero-h1 em {
+  font-style: italic;
+  color: var(--d);
+  font-weight: 600;
+}
+
+.hero-sub {
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 3rem;
+  max-width: 580px;
+  line-height: 1.5;
+}
+
+/* DIVISOR DOURADO */
+.div-d {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--de), transparent);
+  margin: 4rem 0;
+}
+
+/* ── SEÇÕES ── */
+section {
+  padding: 5rem 0;
+  position: relative;
+}
+
+section.clara {
+  background: var(--b);
+  color: var(--t);
+}
+
+section.media {
+  background: #EDE9E0;
+  color: var(--t);
+}
+
+.sec-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--de);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.sec-label.escuro { color: var(--vm); }
+
+.sec-h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: #FFFFFF;
+}
+
+.sec-h2.escuro { color: var(--v); }
+
+.sec-corpo {
+  font-size: clamp(16px, 2vw, 19px);
+  color: rgba(255,255,255,.78);
+  max-width: 600px;
+  line-height: 1.8;
+}
+
+.sec-corpo.escuro {
+  color: rgba(26,60,46,.78);
+}
+
+/* ── BOTÃO ── */
+.btn {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 18px 48px;
+  border: 1.5px solid var(--d);
+  color: var(--d);
+  background: transparent;
+  text-decoration: none;
+  transition: background .22s, color .22s;
+  cursor: pointer;
+}
+.btn:hover, .btn.s { background: var(--d); color: var(--v); }
+.btn.s { border-color: var(--d); }
+.btn.verde {
+  border-color: var(--v);
+  color: var(--v);
+  background: transparent;
+}
+.btn.verde:hover { background: var(--v); color: var(--d); }
+
+/* ── GAP VISUAL ── */
+.gap-visual {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.gap-col {
+  padding: 2rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(248,227,140,.18);
+}
+
+.gap-col.destaque {
+  background: rgba(248,227,140,.08);
+  border-color: var(--de);
+}
+
+.gap-col-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--de);
+  margin-bottom: .8rem;
+}
+
+.gap-col p {
+  font-size: 16px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.6;
+}
+
+.gap-seta {
+  font-size: 28px;
+  color: var(--de);
+  font-family: 'DM Mono', monospace;
+  text-align: center;
+}
+
+/* ── EIXOS GRID ── */
+.eixos-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(248,227,140,.12);
+  margin: 3rem 0;
+}
+
+.eixo-item {
+  background: var(--v);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .6rem;
+  transition: background .2s;
+}
+
+.eixo-item:hover { background: var(--vm); }
+
+.eixo-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--de);
+  letter-spacing: 2px;
+}
+
+.eixo-nome {
+  font-size: 18px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--d);
+  line-height: 1.2;
+}
+
+.eixo-pergunta {
+  font-size: 13px;
+  color: rgba(255,255,255,.55);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── O QUE VOCÊ RECEBE ── */
+.recebe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: rgba(26,60,46,.15);
+  margin: 2.5rem 0;
+}
+
+.recebe-item {
+  background: var(--b);
+  padding: 2rem 2.5rem;
+}
+
+.recebe-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--vm);
+  opacity: .3;
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+
+.recebe-titulo {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--v);
+  margin-bottom: .5rem;
+  line-height: 1.3;
+}
+
+.recebe-desc {
+  font-size: 15px;
+  color: rgba(26,60,46,.65);
+  line-height: 1.65;
+}
+
+/* ── IVRR CTA ── */
+.ivrr-faixa {
+  background: rgba(255,255,255,.04);
+  border-top: 1px solid rgba(248,227,140,.15);
+  border-bottom: 1px solid rgba(248,227,140,.15);
+  padding: 2.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 4rem 0;
+}
+
+.ivrr-faixa p {
+  font-size: 16px;
+  color: rgba(255,255,255,.65);
+  font-style: italic;
+  max-width: 480px;
+  line-height: 1.6;
+}
+
+/* ── PREÇO ── */
+.preco-bloco {
+  background: rgba(248,227,140,.06);
+  border: 1px solid rgba(248,227,140,.25);
+  padding: 3.5rem;
+  text-align: center;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.preco-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--de);
+  margin-bottom: 1rem;
+}
+
+.preco-valor {
+  font-size: clamp(48px, 7vw, 80px);
+  font-weight: 600;
+  font-style: italic;
+  color: var(--d);
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+
+.preco-moeda {
+  font-size: 24px;
+  vertical-align: super;
+  font-weight: 300;
+}
+
+.preco-desc {
+  font-size: 15px;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.preco-inclui {
+  text-align: left;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.preco-inclui-item {
+  font-size: 15px;
+  color: rgba(255,255,255,.78);
+  display: flex;
+  gap: .8rem;
+  align-items: flex-start;
+}
+
+.preco-inclui-item::before {
+  content: '✓';
+  color: var(--d);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── CITAÇÃO ── */
+.citacao-bloco {
+  border-left: 3px solid var(--de);
+  padding: 1.5rem 2rem;
+  background: rgba(248,227,140,.05);
+  margin: 3rem 0;
+}
+
+.citacao-bloco p {
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-style: italic;
+  color: rgba(255,255,255,.85);
+  line-height: 1.5;
+  margin-bottom: .6rem;
+}
+
+.citacao-autor {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--de);
+}
+
+/* ── IVAN ── */
+.ivan-bloco {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.ivan-credenciais {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.ivan-cred-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--de);
+  padding: .6rem 0;
+  border-bottom: 1px solid rgba(248,227,140,.15);
+}
+
+.ivan-texto p {
+  font-size: clamp(15px, 1.8vw, 18px);
+  color: rgba(255,255,255,.75);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--t);
+  padding: 3rem 0;
+  text-align: center;
+}
+
+footer p {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,.28);
+  margin-bottom: .3rem;
+}
+
+footer a { color: var(--de); text-decoration: none; }
+
+/* ── LINHA DOURADA ── */
+.faixa-d {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--de) 20%, var(--d) 50%, var(--de) 80%, transparent);
+}
+
+/* ── ANIMAÇÕES ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero .w > * {
+  animation: fadeUp .7s ease both;
+}
+.hero .badge          { animation-delay: .1s; }
+.hero .hero-pre       { animation-delay: .2s; }
+.hero .hero-h1        { animation-delay: .35s; }
+.hero .hero-sub       { animation-delay: .5s; }
+.hero .btn            { animation-delay: .65s; }
+.hero .ivrr-faixa     { animation-delay: .8s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .w, .w-wide { padding: 0 1.8rem; }
+  .eixos-grid { grid-template-columns: 1fr 1fr; }
+  .recebe-grid { grid-template-columns: 1fr; }
+  .gap-visual { grid-template-columns: 1fr; }
+  .gap-seta { transform: rotate(90deg); }
+  .ivan-bloco { grid-template-columns: 1fr; gap: 2rem; }
+  .ivrr-faixa { flex-direction: column; text-align: center; }
+  .preco-bloco { padding: 2.5rem 1.8rem; }
+}
+
+@media (max-width: 480px) {
+  .eixos-grid { grid-template-columns: 1fr; }
+  .hero-h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+<div class="w">
+  <div class="badge">Método VIDA · Semântica da Riqueza</div>
+
+  <p class="hero-pre">Você descobriu como se relaciona com a riqueza.</p>
+
+  <h1 class="hero-h1">
+    O que você construiu<br>
+    <em>expressa o que</em><br>
+    <em>você acredita?</em>
+  </h1>
+
+  <p class="hero-sub">
+    Orientação e coerência são dimensões diferentes.<br>
+    O IVCP™ mede a distância entre as duas.
+  </p>
+
+  <a href="https://go.hotmart.com/B106191075K" class="btn s">
+    Quero descobrir meu gap →
+  </a>
+
+  <div class="ivrr-faixa">
+    <p>
+      Ainda não fez o IVRR™? O scanner gratuito revela sua relação com a riqueza
+      e é o ponto de partida natural para o IVCP™.
+    </p>
+    <a href="https://ivanlvianna.github.io/indicevidacontinuidadepatrimonial/ivrr-scanner.html" class="btn" style="white-space:nowrap;">
+      Fazer o IVRR™ grátis →
+    </a>
+  </div>
+</div>
+</section>
+
+<div class="faixa-d"></div>
+
+<!-- ══ O GAP ══ -->
+<section style="padding:5rem 0;">
+<div class="w">
+  <span class="sec-label">O problema central</span>
+  <h2 class="sec-h2">É possível ter alta consciência<br>e baixa coerência.</h2>
+  <p class="sec-corpo" style="margin-bottom:3rem;">
+    Você pode acreditar que riqueza existe para circular, gerar desenvolvimento e sobreviver a você —
+    e ainda assim ter construído uma estrutura que conta uma história completamente diferente.
+    Esse gap raramente é intencional. Quase sempre é invisível.
+  </p>
+
+  <div class="gap-visual">
+    <div class="gap-col">
+      <p class="gap-col-label">O que você acredita</p>
+      <p>Riqueza como instrumento de liberdade, continuidade e desenvolvimento humano.</p>
+    </div>
+    <div class="gap-seta">↔</div>
+    <div class="gap-col destaque">
+      <p class="gap-col-label">O que você construiu</p>
+      <p>A estrutura real das suas decisões, documentos, sucessão e governança patrimonial.</p>
+    </div>
+  </div>
+
+  <div class="citacao-bloco">
+    <p>"Não basta ter uma filosofia sobre a natureza da riqueza.
+    É preciso que essa filosofia produza arquitetura — estruturas que sobrevivam
+    às suas emoções, às suas indecisões e, eventualmente, à sua ausência."</p>
+    <span class="citacao-autor">Ivan Vianna · CFP® · Método VIDA</span>
+  </div>
+</div>
+</section>
+
+<div class="faixa-d"></div>
+
+<!-- ══ OS CINCO EIXOS ══ -->
+<section style="padding:5rem 0;">
+<div class="w-wide">
+  <div class="w" style="padding:0;margin-bottom:3rem;">
+    <span class="sec-label">O que o IVCP™ mede</span>
+    <h2 class="sec-h2">Cinco eixos.<br>Duas dimensões cada.</h2>
+    <p class="sec-corpo">
+      Para cada eixo, o IVCP™ mede o que você declara acreditar
+      e o que seu comportamento real evidencia. O cruzamento revela o gap.
+    </p>
+  </div>
+
+  <div class="eixos-grid">
+    <div class="eixo-item">
+      <span class="eixo-num">01</span>
+      <span class="eixo-nome">Identidade</span>
+      <span class="eixo-pergunta">Quem você é depende do que você possui?</span>
+    </div>
+    <div class="eixo-item">
+      <span class="eixo-num">02</span>
+      <span class="eixo-nome">Liberdade</span>
+      <span class="eixo-pergunta">Seu patrimônio amplia escolhas ou cria dependências?</span>
+    </div>
+    <div class="eixo-item">
+      <span class="eixo-num">03</span>
+      <span class="eixo-nome">Produtividade</span>
+      <span class="eixo-pergunta">Você transforma recursos em desenvolvimento humano?</span>
+    </div>
+    <div class="eixo-item">
+      <span class="eixo-num">04</span>
+      <span class="eixo-nome">Circulação</span>
+      <span class="eixo-pergunta">Você retém ou faz fluir?</span>
+    </div>
+    <div class="eixo-item">
+      <span class="eixo-num">05</span>
+      <span class="eixo-nome">Continuidade</span>
+      <span class="eixo-pergunta">O que você construiu sobreviverá a você?</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="faixa-d"></div>
+
+<!-- ══ COMO FUNCIONA ══ -->
+<section class="clara">
+<div class="w">
+  <span class="sec-label escuro">Como funciona</span>
+  <h2 class="sec-h2 escuro">Duas partes.<br>Um relatório. Uma sessão.</h2>
+
+  <div class="recebe-grid" style="margin-top:2.5rem;">
+    <div class="recebe-item">
+      <div class="recebe-num">A</div>
+      <div class="recebe-titulo">Diagnóstico objetivo</div>
+      <p class="recebe-desc">
+        15 afirmações — 3 por eixo — em escala de evidência.
+        Você avalia o quanto seu comportamento real confirma
+        ou contradiz sua orientação declarada em cada dimensão.
+      </p>
+    </div>
+    <div class="recebe-item">
+      <div class="recebe-num">B</div>
+      <div class="recebe-titulo">Reflexão qualitativa</div>
+      <p class="recebe-desc">
+        5 perguntas abertas — uma por eixo. Sem resposta certa.
+        O que você escrever vai direto para a preparação da sessão
+        com Ivan Vianna CFP®.
+      </p>
+    </div>
+    <div class="recebe-item">
+      <div class="recebe-num">C</div>
+      <div class="recebe-titulo">Relatório individual</div>
+      <p class="recebe-desc">
+        Radar de coerência por eixo, análise do gap entre
+        orientação e evidência, e suas respostas qualitativas
+        comentadas. Gerado automaticamente ao final.
+      </p>
+    </div>
+    <div class="recebe-item">
+      <div class="recebe-num">D</div>
+      <div class="recebe-titulo">Sessão de devolutiva</div>
+      <p class="recebe-desc">
+        Ivan Vianna CFP® lê seu relatório antes da sessão e
+        chega preparado para a conversa que o diagnóstico aponta.
+        Agendada após o diagnóstico.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══ IVAN ══ -->
+<section style="padding:5rem 0;">
+<div class="w">
+  <span class="sec-label">Quem conduz a sessão</span>
+  <div class="ivan-bloco" style="margin-top:2rem;">
+    <div class="ivan-credenciais">
+      <div class="ivan-cred-item">CFP® Certificado</div>
+      <div class="ivan-cred-item">27 anos no mercado financeiro</div>
+      <div class="ivan-cred-item">Planejador financeiro</div>
+      <div class="ivan-cred-item">Arquiteto de patrimônio</div>
+      <div class="ivan-cred-item">Pós-grad. Neurociências PUCRS</div>
+      <div class="ivan-cred-item">Criador do Método VIDA</div>
+    </div>
+    <div class="ivan-texto">
+      <p>
+        Ivan Vianna não é um consultor financeiro convencional.
+        Sua formação atravessa planejamento patrimonial, neurociências do comportamento,
+        filosofia aplicada e 27 anos de prática com executivos, médicos, advogados e empresários.
+      </p>
+      <p>
+        O Método VIDA foi desenvolvido a partir dessa intersecção —
+        a convicção de que patrimônio bem construído não é apenas uma questão técnica,
+        mas uma questão de coerência entre o que se acredita e o que se edifica.
+      </p>
+      <p>
+        A sessão de devolutiva do IVCP™ não é uma apresentação de resultados.
+        É uma conversa que começa onde o diagnóstico aponta.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="faixa-d"></div>
+
+<!-- ══ PREÇO ══ -->
+<section style="padding:6rem 0;">
+<div class="w">
+  <span class="sec-label" style="text-align:center;display:block;margin-bottom:2rem;">Investimento</span>
+
+  <div class="preco-bloco">
+    <p class="preco-label">IVCP™ · Diagnóstico completo + sessão</p>
+    <div class="preco-valor">
+      <span class="preco-moeda">R$</span> 197<span style="font-size:32px;">,00</span>
+    </div>
+    <p class="preco-desc">pagamento único · acesso imediato</p>
+
+    <div class="preco-inclui">
+      <div class="preco-inclui-item">Diagnóstico objetivo em 5 eixos (Parte A)</div>
+      <div class="preco-inclui-item">Reflexão qualitativa aprofundada (Parte B)</div>
+      <div class="preco-inclui-item">Relatório individual gerado automaticamente</div>
+      <div class="preco-inclui-item">Radar de coerência por dimensão</div>
+      <div class="preco-inclui-item">Sessão de devolutiva com Ivan Vianna CFP®</div>
+    </div>
+
+    <a href="https://go.hotmart.com/B106191075K" class="btn s" style="width:100%;text-align:center;display:block;">
+      Quero descobrir meu gap →
+    </a>
+
+    <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.3);margin-top:1.2rem;letter-spacing:1px;">
+      Pagamento seguro via Hotmart · Garantia de 7 dias
+    </p>
+  </div>
+
+  <div class="citacao-bloco" style="margin-top:4rem;">
+    <p>"O verdadeiro teste da riqueza não é quanto ela acumula.
+    É quanto ela sustenta depois que o propósito de acumular
+    deixou de ser o centro da vida de quem a construiu."</p>
+    <span class="citacao-autor">Ivan Vianna · CFP® · Método VIDA</span>
+  </div>
+</div>
+</section>
+
+<div class="faixa-d"></div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="w">
+    <p>Ivan Vianna · CFP® · Planejador financeiro · Arquiteto de patrimônio</p>
+    <p>CNPJ 56.099.913/0001-61 · <a href="https://ivanviannafinancas.com.br">ivanviannafinancas.com.br</a></p>
+    <p style="margin-top:.8rem;">WhatsApp: <a href="https://wa.me/5511979530555">+55 11 97953-0555</a></p>
+    <p style="margin-top:1rem;opacity:.4;">IVCP™ · Índice VIDA de Coerência Patrimonial · © Ivan Vianna Finanças Pessoais e Empresariais</p>
+  </div>
+</footer>
+
+</body>
+</html>
