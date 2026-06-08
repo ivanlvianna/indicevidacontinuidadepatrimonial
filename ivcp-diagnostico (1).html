@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IVCP™ · Índice VIDA de Coerência Patrimonial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:       #1A3C2E;
+  --verde-m:     #2E5C46;
+  --verde-c:     #3d7a5a;
+  --dourado:     #f8e38c;
+  --dourado-m:   #e8c85a;
+  --dourado-e:   #d7ae4d;
+  --branco:      #FAFAF8;
+  --cinza:       #EDE9E0;
+  --texto:       #1a1a16;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
+
+body{
+  background:var(--verde);
+  color:var(--branco);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.1rem;
+  line-height:1.8;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 75% 15%,rgba(248,227,140,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse at 15% 85%,rgba(46,92,70,0.5) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.wrap{
+  position:relative;z-index:1;
+  max-width:720px;margin:0 auto;
+  padding:0 2.5rem;
+  box-sizing:border-box;width:100%;
+}
+
+/* ── TELAS ── */
+.tela{display:none;min-height:100vh;flex-direction:column;justify-content:center;padding:4rem 0;}
+.tela.ativa{display:flex;}
+#tela-diagnostico.ativa,#tela-relatorio.ativa{display:block;min-height:auto;padding:3rem 0 5rem;}
+
+/* ── TIPOGRAFIA ── */
+.badge{
+  font-family:'DM Mono',monospace;
+  font-size:0.78rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--dourado);opacity:0.85;margin-bottom:2rem;display:block;
+}
+
+.titulo-hero{
+  font-size:clamp(1.9rem,5.5vw,3.2rem);
+  font-weight:300;font-style:italic;
+  line-height:1.18;color:var(--branco);
+  margin-bottom:0.5rem;word-break:break-word;
+}
+.titulo-hero em{font-style:normal;color:var(--dourado);font-weight:600;}
+
+.sigla{
+  font-family:'DM Mono',monospace;
+  font-size:0.82rem;color:var(--dourado-e);
+  letter-spacing:0.18em;margin-bottom:2.5rem;display:block;
+}
+
+.subtexto{font-size:1.1rem;color:rgba(250,250,248,0.82);max-width:560px;margin-bottom:1.2rem;}
+.pergunta-hero{font-size:1.3rem;font-style:italic;color:var(--dourado);margin:2rem 0 2.5rem;line-height:1.4;}
+.detalhe{font-family:'DM Mono',monospace;font-size:0.78rem;color:rgba(250,250,248,0.4);letter-spacing:0.08em;margin-bottom:2.5rem;}
+
+/* ── BOTÕES ── */
+.btn{
+  display:inline-block;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.82rem;font-weight:500;
+  letter-spacing:0.18em;text-transform:uppercase;
+  padding:1rem 2.4rem;
+  border:1.5px solid var(--dourado);
+  color:var(--dourado);background:transparent;
+  transition:background 0.22s,color 0.22s;
+  text-decoration:none;
+}
+.btn:hover,.btn.solid{background:var(--dourado);color:var(--verde);}
+.btn.solid:hover{background:var(--dourado-m);}
+.btn:disabled{opacity:0.3;cursor:not-allowed;background:transparent;color:var(--dourado);}
+
+/* ── FORM ── */
+.form-grupo{margin-bottom:1.2rem;}
+.form-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.76rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--dourado-e);display:block;margin-bottom:0.5rem;
+}
+.form-input{
+  width:100%;padding:0.9rem 1.1rem;
+  background:rgba(250,250,248,0.07);
+  border:1px solid rgba(248,227,140,0.3);
+  color:var(--branco);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.05rem;outline:none;
+  transition:border-color 0.2s;
+}
+.form-input::placeholder{color:rgba(250,250,248,0.3);}
+.form-input:focus{border-color:var(--dourado);}
+.form-textarea{
+  width:100%;padding:1rem 1.1rem;
+  background:rgba(250,250,248,0.07);
+  border:1px solid rgba(248,227,140,0.3);
+  color:var(--branco);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.05rem;outline:none;
+  min-height:120px;resize:vertical;
+  transition:border-color 0.2s;line-height:1.7;
+}
+.form-textarea::placeholder{color:rgba(250,250,248,0.3);}
+.form-textarea:focus{border-color:var(--dourado);}
+.privacidade{font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(250,250,248,0.35);margin-top:1rem;line-height:1.6;}
+
+/* ── DIAGNÓSTICO ── */
+.prog-wrap{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;}
+.prog-label{font-family:'DM Mono',monospace;font-size:0.76rem;color:var(--dourado-e);letter-spacing:0.12em;white-space:nowrap;}
+.prog-bar{flex:1;height:2px;background:rgba(248,227,140,0.15);}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--dourado-e),var(--dourado));transition:width 0.4s ease;width:0%;}
+
+.secao-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--dourado);opacity:0.8;margin-bottom:0.6rem;display:block;
+}
+.secao-titulo{
+  font-size:clamp(1.2rem,3.5vw,1.65rem);
+  font-weight:300;font-style:italic;
+  color:var(--branco);line-height:1.35;margin-bottom:1.8rem;
+}
+
+/* PARTE A — escala likert */
+.item-a{margin-bottom:2.2rem;padding-bottom:2.2rem;border-bottom:1px dashed rgba(248,227,140,0.12);}
+.item-a:last-child{border-bottom:none;}
+.item-a-texto{font-size:1.05rem;color:rgba(250,250,248,0.9);margin-bottom:1rem;line-height:1.6;}
+
+.escala{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.escala-btn{
+  padding:0.55rem 1rem;
+  border:1px solid rgba(248,227,140,0.2);
+  background:rgba(250,250,248,0.04);
+  color:rgba(250,250,248,0.7);
+  cursor:pointer;font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.08em;
+  transition:all 0.18s;white-space:nowrap;
+}
+.escala-btn:hover{border-color:rgba(248,227,140,0.5);background:rgba(248,227,140,0.07);}
+.escala-btn.sel{border-color:var(--dourado);background:rgba(248,227,140,0.14);color:var(--branco);}
+
+.escala-labels{
+  display:flex;justify-content:space-between;
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  color:rgba(250,250,248,0.3);letter-spacing:0.08em;
+  margin-top:0.4rem;
+}
+
+/* PARTE B — qualitativa */
+.item-b{margin-bottom:2.4rem;}
+.item-b-pergunta{
+  font-size:1.15rem;font-style:italic;
+  color:var(--dourado);line-height:1.5;margin-bottom:0.8rem;
+}
+.item-b-contexto{
+  font-size:0.92rem;color:rgba(250,250,248,0.5);
+  margin-bottom:0.8rem;font-style:italic;
+}
+
+/* NAV */
+.diag-nav{display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;}
+.btn-nav{
+  font-family:'DM Mono',monospace;
+  font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;
+  padding:0.8rem 1.8rem;border:1px solid;cursor:pointer;
+  transition:background 0.2s,color 0.2s;
+}
+.btn-prox{border-color:var(--dourado);color:var(--dourado);background:transparent;}
+.btn-prox:disabled{opacity:0.3;cursor:not-allowed;}
+.btn-ant{border-color:rgba(250,250,248,0.25);color:rgba(250,250,248,0.45);background:transparent;}
+.btn-ant:hover{border-color:rgba(250,250,248,0.5);color:rgba(250,250,248,0.7);}
+
+/* ── RELATÓRIO ── */
+.rel-header{margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid rgba(248,227,140,0.2);}
+.rel-saudacao{font-family:'DM Mono',monospace;font-size:0.76rem;color:var(--dourado-e);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.5rem;}
+.rel-titulo{font-size:clamp(1.6rem,4.5vw,2.6rem);font-weight:300;font-style:italic;color:var(--dourado);line-height:1.2;margin-bottom:0.4rem;}
+.rel-sub{font-size:1rem;color:rgba(250,250,248,0.6);font-style:italic;}
+
+/* RADAR COERÊNCIA */
+.radar-section{margin:2rem 0;}
+.radar-titulo{font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dourado-e);margin-bottom:1.2rem;}
+.radar-wrap{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;}
+.radar-legenda{display:flex;flex-direction:column;gap:0.7rem;}
+.radar-item{display:flex;align-items:center;gap:0.7rem;}
+.radar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.radar-dot.orientacao{background:var(--dourado);}
+.radar-dot.coerencia{background:var(--verde-c);}
+.radar-item-nome{font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.08em;color:rgba(250,250,248,0.7);}
+.radar-item-vals{font-family:'DM Mono',monospace;font-size:0.72rem;margin-left:auto;padding-left:0.8rem;color:rgba(250,250,248,0.5);}
+
+/* GAP CARD */
+.gap-card{
+  border-left:2px solid rgba(248,227,140,0.25);
+  padding:1rem 1.4rem;margin-bottom:1rem;
+}
+.gap-card.critico{border-color:#e05a5a;}
+.gap-card.atencao{border-color:var(--dourado-e);}
+.gap-card.alinhado{border-color:var(--verde-c);}
+.gap-card-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.3rem;}
+.gap-card-nome{font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dourado-e);}
+.gap-card-gap{font-family:'DM Mono',monospace;font-size:0.85rem;font-weight:500;}
+.gap-card-gap.neg{color:#e09a9a;}
+.gap-card-gap.neu{color:var(--dourado-e);}
+.gap-card-gap.pos{color:#7ecfab;}
+.gap-card-texto{font-size:0.95rem;color:rgba(250,250,248,0.8);line-height:1.6;}
+
+/* QUALITATIVO */
+.qual-bloco{
+  background:rgba(250,250,248,0.04);
+  border:1px solid rgba(248,227,140,0.15);
+  padding:1.6rem 1.8rem;margin-bottom:1.2rem;
+}
+.qual-eixo{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dourado-e);margin-bottom:0.5rem;}
+.qual-pergunta{font-size:1rem;font-style:italic;color:rgba(250,250,248,0.6);margin-bottom:0.6rem;line-height:1.5;}
+.qual-resposta{font-size:1.05rem;color:var(--branco);line-height:1.7;white-space:pre-wrap;}
+
+/* NOTA IVAN */
+.nota-ivan{
+  background:rgba(248,227,140,0.06);
+  border:1px solid rgba(248,227,140,0.25);
+  padding:2rem 2rem;margin:2.5rem 0;
+}
+.nota-ivan-titulo{font-size:1.2rem;font-style:italic;color:var(--dourado);margin-bottom:0.8rem;}
+.nota-ivan-texto{font-size:0.98rem;color:rgba(250,250,248,0.8);line-height:1.7;margin-bottom:1.4rem;}
+
+.citacao{border-left:3px solid var(--dourado-e);padding:1.2rem 1.8rem;margin:2rem 0;background:rgba(248,227,140,0.06);font-style:italic;font-size:1.1rem;color:rgba(250,250,248,0.9);}
+.citacao span{display:block;margin-top:0.6rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-style:normal;color:var(--dourado-e);letter-spacing:0.12em;}
+
+.divisor{border:none;border-top:1px solid rgba(248,227,140,0.15);margin:2.5rem 0;}
+
+.assinatura{margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(248,227,140,0.15);text-align:center;}
+.assinatura p{font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(250,250,248,0.35);letter-spacing:0.1em;margin-bottom:0.25rem;}
+.assinatura a{color:var(--dourado-e);text-decoration:none;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeUp 0.55s ease both;}
+
+@media(max-width:580px){
+  .wrap{padding:0 1.8rem;}
+  .escala{gap:0.3rem;}
+  .escala-btn{padding:0.5rem 0.7rem;font-size:0.7rem;}
+  .radar-wrap{flex-direction:column;}
+  .diag-nav{flex-direction:column;}
+  .btn-nav{width:100%;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TELA 1: INTRO ══ -->
+<div id="tela-intro" class="tela ativa">
+<div class="wrap fade-in">
+  <span class="badge">Método VIDA · Diagnóstico exclusivo</span>
+  <h1 class="titulo-hero">Índice VIDA de<br><em>Coerência Patrimonial</em></h1>
+  <span class="sigla">IVCP™ · Ivan Vianna CFP®</span>
+
+  <p class="subtexto">O IVRR™ revelou <em>como você se relaciona</em> com a riqueza.</p>
+  <p class="pergunta-hero">A estrutura que você construiu expressa os valores que você afirma possuir?</p>
+  <p class="subtexto">Orientação e coerência são dimensões diferentes. É possível ter alta consciência e baixa coerência. O IVCP™ foi desenvolvido para revelar esse gap — e transformá-lo em ponto de partida para uma conversa.</p>
+
+  <p class="detalhe">Duas partes · 20–25 minutos · relatório individual + sessão com Ivan Vianna CFP®</p>
+
+  <button class="btn solid" onclick="ir('captura')">Iniciar diagnóstico</button>
+</div>
+</div>
+
+<!-- ══ TELA 2: CAPTURA ══ -->
+<div id="tela-captura" class="tela">
+<div class="wrap fade-in">
+  <span class="badge" style="margin-bottom:1.2rem;">IVCP™ · Identificação</span>
+  <h2 style="font-size:clamp(1.5rem,4vw,2.2rem);font-weight:300;font-style:italic;color:var(--branco);margin-bottom:1rem;">Antes de começar</h2>
+  <p class="subtexto" style="margin-bottom:2rem;">Seu relatório será gerado ao final e enviado por e-mail. Se você realizou o IVRR™, informe seu perfil — isso enriquece a análise de coerência.</p>
+
+  <div class="form-grupo">
+    <label class="form-label" for="c-nome">Nome completo</label>
+    <input class="form-input" type="text" id="c-nome" placeholder="Seu nome" autocomplete="name">
+  </div>
+  <div class="form-grupo">
+    <label class="form-label" for="c-email">E-mail</label>
+    <input class="form-input" type="email" id="c-email" placeholder="seu@email.com" autocomplete="email">
+  </div>
+  <div class="form-grupo">
+    <label class="form-label" for="c-wa">WhatsApp</label>
+    <input class="form-input" type="tel" id="c-wa" placeholder="(11) 99999-9999" autocomplete="tel">
+  </div>
+  <div class="form-grupo">
+    <label class="form-label" for="c-ivrr">Perfil IVRR™ <span style="opacity:0.5;font-size:0.85em;">(opcional — se realizou o scanner)</span></label>
+    <select class="form-input" id="c-ivrr" style="cursor:pointer;">
+      <option value="">Não realizei o IVRR™</option>
+      <option value="retencao">Retenção Defensiva</option>
+      <option value="acumulacao">Acumulação Identitária</option>
+      <option value="transicao">Transição Consciente</option>
+      <option value="produtividade">Produtividade Emergente</option>
+      <option value="fluxo">Fluxo Integrado</option>
+    </select>
+  </div>
+
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.4rem;">
+    <button class="btn solid" onclick="iniciarDiagnostico()">Continuar</button>
+    <button class="btn" onclick="ir('intro')" style="font-size:0.74rem;">← Voltar</button>
+  </div>
+  <p class="privacidade">Seus dados são usados exclusivamente para geração do relatório e agendamento da sessão. Nenhum dado é compartilhado com terceiros.</p>
+</div>
+</div>
+
+<!-- ══ TELA 3: DIAGNÓSTICO ══ -->
+<div id="tela-diagnostico" class="tela">
+<div class="wrap">
+  <div class="prog-wrap">
+    <span class="prog-label" id="prog-label">Parte A · 1/5</span>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+  <div id="diag-bloco" class="fade-in"></div>
+</div>
+</div>
+
+<!-- ══ TELA 4: RELATÓRIO ══ -->
+<div id="tela-relatorio" class="tela">
+<div class="wrap">
+
+  <div class="rel-header fade-in">
+    <p class="rel-saudacao" id="rel-saud">Relatório individual · IVCP™</p>
+    <h2 class="rel-titulo" id="rel-titulo">Índice VIDA de Coerência Patrimonial™</h2>
+    <p class="rel-sub" id="rel-sub"></p>
+  </div>
+
+  <!-- RADAR DUPLO -->
+  <div class="radar-section fade-in">
+    <p class="radar-titulo">Orientação declarada vs. coerência evidenciada</p>
+    <div class="radar-wrap">
+      <svg width="220" height="220" viewBox="0 0 220 220" id="radar-svg"></svg>
+      <div>
+        <div class="radar-legenda" id="radar-leg"></div>
+        <p style="font-family:'DM Mono',monospace;font-size:0.68rem;color:rgba(250,250,248,0.35);margin-top:1rem;letter-spacing:0.08em;">Amarelo · orientação &nbsp;|&nbsp; Verde · coerência</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divisor">
+
+  <!-- GAP POR EIXO -->
+  <div class="fade-in">
+    <p class="radar-titulo" style="margin-bottom:1rem;">Análise de coerência por eixo</p>
+    <div id="gap-cards"></div>
+  </div>
+
+  <hr class="divisor">
+
+  <!-- QUALITATIVO -->
+  <div class="fade-in">
+    <p class="radar-titulo" style="margin-bottom:0.5rem;">Parte B · Dimensão qualitativa</p>
+    <p style="font-size:0.92rem;color:rgba(250,250,248,0.5);font-style:italic;margin-bottom:1.4rem;">Suas respostas abaixo foram registradas e farão parte da preparação da sessão com Ivan Vianna CFP®.</p>
+    <div id="qual-respostas"></div>
+  </div>
+
+  <hr class="divisor">
+
+  <!-- NOTA IVAN -->
+  <div class="nota-ivan fade-in">
+    <h3 class="nota-ivan-titulo" id="nota-titulo">O que este relatório revela</h3>
+    <p class="nota-ivan-texto" id="nota-texto"></p>
+    <p style="font-size:1rem;font-style:italic;color:var(--branco);margin-bottom:1.4rem;" id="nota-encerramento"></p>
+    <a href="https://wa.me/5511979530555" class="btn solid" target="_blank">Agendar sessão com Ivan Vianna →</a>
+  </div>
+
+  <div class="citacao fade-in" id="rel-citacao"></div>
+
+  <div class="assinatura">
+    <p>Ivan Vianna · CFP® · Planejador financeiro · Arquiteto de patrimônio</p>
+    <p>CNPJ 56.099.913/0001-61 · <a href="https://ivanviannafinancas.com.br">ivanviannafinancas.com.br</a></p>
+    <p style="margin-top:0.6rem;opacity:0.3;">IVCP™ · Método VIDA · © Ivan Vianna Finanças Pessoais e Empresariais</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ══ SCRIPT ══ -->
+<script>
+// ── CONSTANTES ──────────────────────────────────────────────────
+const EIXOS = ['Identidade','Liberdade','Produtividade','Circulação','Continuidade'];
+
+// PARTE A — 3 itens por eixo, escala 1–5
+const PARTE_A = [
+  // IDENTIDADE
+  {
+    eixo:0,
+    texto:'Nos últimos 12 meses, tomei decisões financeiras ou profissionais que refletem claramente meus valores — mesmo quando eram contrárias ao ganho imediato.',
+    min:'Raramente', max:'Sempre'
+  },
+  {
+    eixo:0,
+    texto:'Consigo descrever quem sou de forma que não dependa do que possuo, do cargo que ocupo ou do patrimônio que construí.',
+    min:'Muito difícil', max:'Com clareza'
+  },
+  {
+    eixo:0,
+    texto:'A ideia de perder parte significativa do meu patrimônio afetaria principalmente minha segurança financeira — não minha identidade pessoal.',
+    min:'Abalaria minha identidade', max:'Afetaria só a segurança'
+  },
+  // LIBERDADE
+  {
+    eixo:1,
+    texto:'Hoje, tenho liberdade real para dizer não a oportunidades, projetos ou relações que não fazem sentido para mim — sem medo das consequências financeiras.',
+    min:'Não tenho essa liberdade', max:'Tenho plenamente'
+  },
+  {
+    eixo:1,
+    texto:'Existe alguma situação profissional ou financeira da qual gostaria de sair, mas ainda não saí por razões exclusivamente financeiras.',
+    min:'Várias situações assim', max:'Nenhuma situação assim'
+  },
+  {
+    eixo:1,
+    texto:'Minhas decisões de carreira e negócios nos últimos 2 anos foram orientadas principalmente por propósito — não por necessidade financeira.',
+    min:'Necessidade financeira dominou', max:'Propósito dominou'
+  },
+  // PRODUTIVIDADE
+  {
+    eixo:2,
+    texto:'Dedico tempo e recursos de forma intencional ao meu desenvolvimento — leitura, formação, mentoria, reflexão — como parte regular da minha rotina.',
+    min:'Quase nunca', max:'Sistematicamente'
+  },
+  {
+    eixo:2,
+    texto:'Invisto de forma consistente no desenvolvimento das pessoas ao meu redor — equipe, filhos, colaboradores próximos.',
+    min:'Não sistematicamente', max:'Com critério definido'
+  },
+  {
+    eixo:2,
+    texto:'O que estou construindo hoje geraria valor mesmo que eu parasse amanhã — tem vida própria além da minha presença.',
+    min:'Depende de mim totalmente', max:'Tem vida própria'
+  },
+  // CIRCULAÇÃO
+  {
+    eixo:3,
+    texto:'Direciono recursos de forma intencional para além da minha família imediata — com critério, estratégia e regularidade.',
+    min:'Não faço isso', max:'Faço com estratégia'
+  },
+  {
+    eixo:3,
+    texto:'Quando tenho um recurso que poderia ser redistribuído sem prejudicar minha segurança, consigo fazê-lo sem resistência significativa.',
+    min:'Muita resistência', max:'Com facilidade'
+  },
+  {
+    eixo:3,
+    texto:'Penso na riqueza como algo que deve circular — gerar oportunidades, conhecimento e desenvolvimento além de mim.',
+    min:'Penso em proteger e acumular', max:'Penso em fazer circular'
+  },
+  // CONTINUIDADE
+  {
+    eixo:4,
+    texto:'Há clareza documentada sobre o que acontecerá com o que construí — há planejamento, não apenas intenção.',
+    min:'Só tenho intenção', max:'Está estruturado e documentado'
+  },
+  {
+    eixo:4,
+    texto:'As pessoas que me são próximas sabem o que quero que sobreviva a mim — valores, projeto, patrimônio, missão.',
+    min:'Nunca falamos sobre isso', max:'Está explicitado e compartilhado'
+  },
+  {
+    eixo:4,
+    texto:'Meu negócio ou projeto principal funcionaria com qualidade sem a minha presença cotidiana.',
+    min:'Depende de mim totalmente', max:'Funciona com autonomia'
+  },
+];
+
+// PARTE B — 1 pergunta qualitativa por eixo
+const PARTE_B = [
+  {
+    eixo:0,
+    pergunta:'Descreva uma situação em que o medo de perder algo material influenciou uma decisão que hoje você avalia de forma diferente.',
+    contexto:'Não há resposta certa. O que importa é a honestidade da reflexão.'
+  },
+  {
+    eixo:1,
+    pergunta:'O que você ainda não fez — profissional ou pessoalmente — porque "ainda não é o momento financeiro certo"?',
+    contexto:'Se a resposta for "nada", descreva como chegou a essa liberdade.'
+  },
+  {
+    eixo:2,
+    pergunta:'O que você está construindo agora que continuaria existindo se você parasse amanhã?',
+    contexto:'Pode ser um negócio, um projeto, uma cultura, um legado de valores.'
+  },
+  {
+    eixo:3,
+    pergunta:'Para onde flui o que você gera, além de você mesmo e da sua família imediata?',
+    contexto:'Com que critério você decide? Há intenção por trás ou é reativo?'
+  },
+  {
+    eixo:4,
+    pergunta:'O que você quer que sobreviva a você — e quem sabe disso, além de você?',
+    contexto:'Patrimônio, valores, projeto, missão. O que ficará depois que você não estiver.'
+  },
+];
+
+// ── TEXTOS DE GAP ────────────────────────────────────────────────
+const GAP_TEXTOS = {
+  0: {
+    critico: 'Há uma lacuna significativa entre a identidade que você descreve e as decisões que evidencia. Isso não é julgamento — é dado. Essa tensão costuma ser o ponto de partida mais rico de uma conversa.',
+    atencao: 'Sua orientação de identidade está em desenvolvimento, mas o comportamento ainda revela momentos de fusão entre quem você é e o que você tem. Há consciência — o trabalho é converter consciência em decisão consistente.',
+    alinhado: 'Há coerência entre a forma como você se percebe e as decisões que toma. Sua identidade não parece dependente do que você possui. Isso é raro e valiosa base para tudo o mais.',
+  },
+  1: {
+    critico: 'A liberdade que você declara valorizar ainda não se traduziu em estrutura que a garanta. Há dependências financeiras que constrangem escolhas reais — e isso é exatamente o que o planejamento patrimonial existe para resolver.',
+    atencao: 'Há alguma autonomia real, mas ainda existem situações onde a necessidade financeira dita a decisão. A pergunta é: quais dessas situações poderiam ser resolvidas com arquitetura patrimonial, não com mais renda?',
+    alinhado: 'Sua liberdade financeira está estruturada — você tem margem real para dizer não. Isso é uma conquista que poucos formalizam de forma consciente.',
+  },
+  2: {
+    critico: 'O que você produz ainda está muito centrado em si mesmo e no curto prazo. A produtividade no sentido frommiano — gerar crescimento em outros, criar o que tem vida além de você — ainda é uma intenção, não uma prática estruturada.',
+    atencao: 'Há investimento em desenvolvimento, mas ainda de forma reativa. A produtividade humana como critério alocativo — onde vai meu tempo, minha energia, meus recursos — pode ser desenvolvida com mais intencionalidade.',
+    alinhado: 'Você transforma recursos em desenvolvimento — seu e de outros. Isso é a produtividade no sentido mais preciso de Fromm. O próximo passo é garantir que essa produtividade seja estrutural, não dependente da sua presença.',
+  },
+  3: {
+    critico: 'A riqueza ainda circula principalmente dentro de você e da sua família imediata. Não há problema nisso como ponto de partida — o problema é quando se torna o único destino, indefinidamente.',
+    atencao: 'Há alguma circulação além do núcleo imediato, mas sem critério estratégico claro. A diferença entre dar quando sobra e criar estrutura de circulação intencional é o que separa filantropia reativa de impacto real.',
+    alinhado: 'Sua riqueza circula com critério. Há intencionalidade na alocação além de você mesmo. Isso é o que Carnegie chamava de strategic giving — e é o nível onde o impacto real começa.',
+  },
+  4: {
+    critico: 'A continuidade existe como valor declarado, mas não como estrutura construída. Isso é o gap mais urgente — não por ser o mais grave, mas por ser o mais reversível agora e irreversível depois.',
+    atencao: 'Há intenção de continuidade e algumas conversas feitas, mas a formalização ainda está incompleta. A distância entre querer e arquitetar é exatamente onde o planejamento patrimonial faz mais diferença.',
+    alinhado: 'Você construiu para além de você — há documentos, estrutura e conversas feitas. Isso coloca você em posição rara: a maioria tem intenção; poucos têm arquitetura.',
+  },
+};
+
+// NOTAS FINAIS por perfil de coerência global
+function notaFinal(mediaGap) {
+  if (mediaGap < -20) return {
+    titulo: 'Gap significativo entre consciência e coerência',
+    texto: 'Seu IVRR™ revelou uma orientação existencial que vai além da acumulação. Mas o IVCP™ revela que a estrutura real ainda conta uma história diferente. Esse gap não é falha de caráter — é o espaço natural entre onde você chegou na consciência e onde a arquitetura patrimonial ainda não chegou.',
+    enc: 'A sessão com Ivan Vianna CFP® começa exatamente aqui: transformar a consciência que você já tem em estrutura que vai além de você.',
+    cit: 'Não basta ter uma filosofia sobre a natureza da riqueza. É preciso que essa filosofia produza arquitetura — estruturas que sobrevivam às suas emoções, às suas indecisões e, eventualmente, à sua ausência.',
+    cit_a: 'Ivan Vianna · CFP® · Método VIDA',
+  };
+  if (mediaGap < 0) return {
+    titulo: 'Consciência à frente da estrutura',
+    texto: 'Você está num ponto de inflexão comum entre quem pensa bem sobre patrimônio: a consciência chegou antes da arquitetura. Você sabe o que quer construir — a estrutura ainda não acompanhou completamente.',
+    enc: 'Esse gap é o mais fácil de fechar quando se tem clareza do que está faltando. A sessão com Ivan Vianna CFP® foi desenhada exatamente para esse momento.',
+    cit: 'A orientação está madura. A questão agora é: a estrutura patrimonial que você construiu é tão produtiva quanto a sua consciência?',
+    cit_a: 'IVRR™ · Método VIDA',
+  };
+  return {
+    titulo: 'Alta coerência — e agora?',
+    texto: 'Seus valores declarados e sua estrutura real estão razoavelmente alinhados. Isso é raro e merece reconhecimento. A conversa com Ivan Vianna CFP® não será sobre corrigir lacunas óbvias — será sobre solidificar o que foi construído e identificar o próximo nível.',
+    enc: 'Coerência não é um estado permanente — é um trabalho contínuo. A sessão começa aqui.',
+    cit: 'Filosofia sem arquitetura se dissolve na primeira crise. Arquitetura sem filosofia constrói o que não dura.',
+    cit_a: 'Ivan Vianna · CFP® · Método VIDA',
+  };
+}
+
+// ── CONFIGURAÇÃO ────────────────────────────────────────────────
+// Após deploy do Apps Script, cole a URL aqui (a mesma do IVRR™):
+const SCRIPT_URL_IVCP = 'https://script.google.com/macros/s/AKfycbzsVpO_OoWVjENJyDP2MCY-wGNqSnuz1oc6txaATRksQNRJCwrOaJaKlGzv2bQQI0I/exec_IVCP';
+
+// ── ESTADO ───────────────────────────────────────────────────────
+let etapa = 0; // 0–4: eixos Parte A; 5: Parte B; 6: gerando
+let respostasA = new Array(15).fill(null); // 3 por eixo × 5
+let respostasB = new Array(5).fill('');
+let dadosLead  = {};
+
+// ── NAVEGAÇÃO ────────────────────────────────────────────────────
+function ir(tela) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById('tela-' + tela).classList.add('ativa');
+  window.scrollTo(0,0);
+}
+
+function iniciarDiagnostico() {
+  const nome  = document.getElementById('c-nome').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  if (!nome || !email) { alert('Por favor, preencha nome e e-mail.'); return; }
+  dadosLead = {
+    nome, email,
+    wa:   document.getElementById('c-wa').value.trim(),
+    ivrr: document.getElementById('c-ivrr').value,
+  };
+  etapa = 0;
+  respostasA = new Array(15).fill(null);
+  respostasB = new Array(5).fill('');
+  ir('diagnostico');
+  renderEtapa();
+}
+
+// ── RENDER ETAPA ─────────────────────────────────────────────────
+function renderEtapa() {
+  const bloco = document.getElementById('diag-bloco');
+  bloco.classList.remove('fade-in');
+  void bloco.offsetWidth;
+  bloco.classList.add('fade-in');
+
+  const total = 10; // 5 eixos A + 5 eixos B
+  const prog  = etapa < 5 ? etapa / total : (5 + etapa - 5) / total;
+  document.getElementById('prog-fill').style.width = (prog * 100) + '%';
+
+  if (etapa < 5) {
+    // PARTE A — eixo atual
+    document.getElementById('prog-label').textContent = `Parte A · Eixo ${etapa+1} de 5 · ${EIXOS[etapa]}`;
+    renderEixoA(etapa);
+  } else {
+    // PARTE B — pergunta qualitativa
+    const bi = etapa - 5;
+    document.getElementById('prog-label').textContent = `Parte B · Reflexão ${bi+1} de 5`;
+    renderEixoB(bi);
+  }
+}
+
+function renderEixoA(eixo) {
+  const itens = PARTE_A.filter(i => i.eixo === eixo);
+  const offset = eixo * 3;
+
+  let html = `
+    <span class="secao-label">Parte A · ${EIXOS[eixo]}</span>
+    <p class="secao-titulo">Avalie cada afirmação de acordo com sua realidade atual</p>`;
+
+  itens.forEach((item, idx) => {
+    const gi = offset + idx;
+    html += `<div class="item-a">
+      <p class="item-a-texto">${item.texto}</p>
+      <div class="escala" id="esc-${gi}">
+        ${[1,2,3,4,5].map(v => `<button class="escala-btn${respostasA[gi]===v?' sel':''}" onclick="selecionarA(${gi},${v})">${v}</button>`).join('')}
+      </div>
+      <div class="escala-labels"><span>${item.min}</span><span>${item.max}</span></div>
+    </div>`;
+  });
+
+  const eixoOk = itens.every((_,idx) => respostasA[offset+idx] !== null);
+
+  html += `<div class="diag-nav">
+    ${etapa > 0 ? `<button class="btn-nav btn-ant" onclick="navA(-1)">← Anterior</button>` : ''}
+    <button class="btn-nav btn-prox" id="btn-prox-a" ${eixoOk?'':'disabled'} onclick="navA(1)">
+      ${etapa === 4 ? 'Continuar para Parte B →' : 'Próximo eixo →'}
+    </button>
+  </div>`;
+
+  document.getElementById('diag-bloco').innerHTML = html;
+}
+
+function selecionarA(gi, val) {
+  respostasA[gi] = val;
+  const esc = document.getElementById('esc-' + gi);
+  esc.querySelectorAll('.escala-btn').forEach((b,i) => b.classList.toggle('sel', i+1 === val));
+  // checar se eixo completo
+  const eixo  = Math.floor(gi / 3);
+  const offset = eixo * 3;
+  const ok = [0,1,2].every(i => respostasA[offset+i] !== null);
+  const btn = document.getElementById('btn-prox-a');
+  if (btn) btn.disabled = !ok;
+}
+
+function navA(dir) {
+  etapa += dir;
+  if (etapa < 0) etapa = 0;
+  renderEtapa();
+}
+
+function renderEixoB(bi) {
+  const item = PARTE_B[bi];
+  const html = `
+    <span class="secao-label">Parte B · Reflexão · ${EIXOS[item.eixo]}</span>
+    <p class="item-b-pergunta">${item.pergunta}</p>
+    <p class="item-b-contexto">${item.contexto}</p>
+    <textarea class="form-textarea" id="tb-${bi}" placeholder="Escreva livremente — não há resposta certa ou errada…" oninput="salvarB(${bi})">${respostasB[bi]}</textarea>
+    <div class="diag-nav">
+      <button class="btn-nav btn-ant" onclick="navB(-1)">← Anterior</button>
+      <button class="btn-nav btn-prox" onclick="navB(1)">
+        ${bi === 4 ? 'Gerar relatório →' : 'Próxima reflexão →'}
+      </button>
+    </div>`;
+  document.getElementById('diag-bloco').innerHTML = html;
+}
+
+function salvarB(bi) {
+  respostasB[bi] = document.getElementById('tb-' + bi).value;
+}
+
+function navB(dir) {
+  const bi = etapa - 5;
+  respostasB[bi] = document.getElementById('tb-' + bi)?.value || respostasB[bi];
+  if (dir > 0 && bi === 4) { gerarRelatorio(); return; }
+  etapa += dir;
+  if (etapa < 0) etapa = 0;
+  renderEtapa();
+}
+
+// ── CÁLCULO ──────────────────────────────────────────────────────
+function calcNotaEixo(eixo) {
+  const offset = eixo * 3;
+  const soma = respostasA[offset] + respostasA[offset+1] + respostasA[offset+2];
+  return Math.round(((soma / 15) - (1/5)) / (1 - 1/5) * 100); // normaliza 3–15 → 0–100
+}
+
+// Simula nota de orientação IVRR por perfil declarado (fallback: 50)
+function notaOrientacaoPorPerfil(perfil) {
+  const map = {retencao:15, acumulacao:38, transicao:55, produtividade:75, fluxo:92, '':50};
+  // Distribui uniformemente pelos 5 eixos com leve variação
+  return Array.from({length:5}, (_,i) => Math.min(100, Math.max(0, (map[perfil]||50) + (i%2===0?5:-5))));
+}
+
+function gerarRelatorio() {
+  const notaCoer  = EIXOS.map((_,i) => calcNotaEixo(i));
+  const notaOrient = notaOrientacaoPorPerfil(dadosLead.ivrr);
+  const gaps = notaCoer.map((c,i) => c - notaOrient[i]);
+  const mediaGap = gaps.reduce((a,b)=>a+b,0) / 5;
+
+  ir('relatorio');
+  renderRelatorio(notaCoer, notaOrient, gaps, mediaGap);
+  enviarIVCP(notaCoer, notaOrient, mediaGap);
+}
+
+function enviarIVCP(coerencia, orientacao, mediaGap) {
+  if (!SCRIPT_URL_IVCP || SCRIPT_URL_IVCP === 'https://script.google.com/macros/s/AKfycbzsVpO_OoWVjENJyDP2MCY-wGNqSnuz1oc6txaATRksQNRJCwrOaJaKlGzv2bQQI0I/exec_IVCP') {
+    console.warn('IVCP: URL do script não configurada.');
+    return;
+  }
+  const respostas = Array.from({length:5}, (_,i) => respostasB[i] || '');
+  const payload = {
+    produto:    'IVCP',
+    nome:       dadosLead.nome,
+    email:      dadosLead.email,
+    wa:         dadosLead.wa || '',
+    perfilIVRR: dadosLead.ivrr || '',
+    coerencia:  coerencia,
+    orientacao: orientacao,
+    respostas:  respostas,
+  };
+  fetch(SCRIPT_URL_IVCP, {
+    method: 'POST',
+    mode:   'no-cors',
+    headers: {'Content-Type':'application/json'},
+    body:    JSON.stringify(payload)
+  }).catch(err => console.warn('IVCP envio:', err));
+}
+
+// ── RENDER RELATÓRIO ─────────────────────────────────────────────
+function renderRelatorio(coer, orient, gaps, mediaGap) {
+  document.getElementById('rel-saud').textContent = dadosLead.nome + ' · IVCP™';
+  document.getElementById('rel-titulo').textContent = 'Índice VIDA de Coerência Patrimonial™';
+  const perfText = dadosLead.ivrr
+    ? `Perfil IVRR™ declarado: ${document.getElementById('c-ivrr').options[document.getElementById('c-ivrr').selectedIndex].text}`
+    : 'Diagnóstico independente (sem perfil IVRR™)';
+  document.getElementById('rel-sub').textContent = perfText;
+
+  // RADAR DUPLO
+  desenharRadarDuplo(orient, coer);
+  const leg = document.getElementById('radar-leg');
+  leg.innerHTML = EIXOS.map((e,i) => `
+    <div class="radar-item">
+      <div class="radar-dot orientacao"></div>
+      <span class="radar-item-nome">${e}</span>
+      <span class="radar-item-vals">orient. ${orient[i]} · coer. ${coer[i]}</span>
+    </div>`).join('');
+
+  // GAP CARDS
+  const gapWrap = document.getElementById('gap-cards');
+  gapWrap.innerHTML = EIXOS.map((e,i) => {
+    const g = gaps[i];
+    const nivel = g < -20 ? 'critico' : g < 5 ? 'atencao' : 'alinhado';
+    const sinal = g > 0 ? '+' : '';
+    const cls   = g < -20 ? 'neg' : g < 5 ? 'neu' : 'pos';
+    return `<div class="gap-card ${nivel}">
+      <div class="gap-card-header">
+        <span class="gap-card-nome">${e}</span>
+        <span class="gap-card-gap ${cls}">${sinal}${g} pts</span>
+      </div>
+      <p class="gap-card-texto">${GAP_TEXTOS[i][nivel]}</p>
+    </div>`;
+  }).join('');
+
+  // QUALITATIVO
+  const qualWrap = document.getElementById('qual-respostas');
+  qualWrap.innerHTML = PARTE_B.map((pb,i) => `
+    <div class="qual-bloco">
+      <p class="qual-eixo">${EIXOS[pb.eixo]}</p>
+      <p class="qual-pergunta">${pb.pergunta}</p>
+      <p class="qual-resposta">${respostasB[i] || '<em style="opacity:0.4">Não respondido</em>'}</p>
+    </div>`).join('');
+
+  // NOTA FINAL
+  const nf = notaFinal(mediaGap);
+  document.getElementById('nota-titulo').textContent = nf.titulo;
+  document.getElementById('nota-texto').textContent  = nf.texto;
+  document.getElementById('nota-encerramento').textContent = nf.enc;
+  document.getElementById('rel-citacao').innerHTML = `"${nf.cit}"<span>— ${nf.cit_a}</span>`;
+
+  window.scrollTo(0,0);
+}
+
+// ── RADAR DUPLO SVG ──────────────────────────────────────────────
+function desenharRadarDuplo(orient, coer) {
+  const svg = document.getElementById('radar-svg');
+  const cx=110, cy=110, r=82, n=5;
+  const ns='http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+
+  const ang = i => (Math.PI*2*i/n) - Math.PI/2;
+  const pt  = (i,v) => {
+    const a=ang(i), d=(v/100)*r;
+    return [cx+d*Math.cos(a), cy+d*Math.sin(a)];
+  };
+
+  // Grades
+  [0.25,0.5,0.75,1].forEach(f => {
+    const pts = Array.from({length:n},(_,i)=>{
+      const a=ang(i),d=f*r;
+      return `${cx+d*Math.cos(a)},${cy+d*Math.sin(a)}`;
+    }).join(' ');
+    const p=document.createElementNS(ns,'polygon');
+    p.setAttribute('points',pts);
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke','rgba(248,227,140,0.1)');
+    p.setAttribute('stroke-width','1');
+    svg.appendChild(p);
+  });
+
+  // Eixos
+  for(let i=0;i<n;i++){
+    const a=ang(i);
+    const l=document.createElementNS(ns,'line');
+    l.setAttribute('x1',cx);l.setAttribute('y1',cy);
+    l.setAttribute('x2',cx+r*Math.cos(a));l.setAttribute('y2',cy+r*Math.sin(a));
+    l.setAttribute('stroke','rgba(248,227,140,0.12)');l.setAttribute('stroke-width','1');
+    svg.appendChild(l);
+  }
+
+  // Polígono orientação (amarelo)
+  const pts1 = orient.map((_,i)=>pt(i,orient[i]).join(',')).join(' ');
+  const po=document.createElementNS(ns,'polygon');
+  po.setAttribute('points',pts1);
+  po.setAttribute('fill','rgba(248,227,140,0.12)');
+  po.setAttribute('stroke','#d7ae4d');po.setAttribute('stroke-width','1.5');
+  svg.appendChild(po);
+
+  // Polígono coerência (verde)
+  const pts2 = coer.map((_,i)=>pt(i,coer[i]).join(',')).join(' ');
+  const pc=document.createElementNS(ns,'polygon');
+  pc.setAttribute('points',pts2);
+  pc.setAttribute('fill','rgba(61,122,90,0.22)');
+  pc.setAttribute('stroke','#3d7a5a');pc.setAttribute('stroke-width','2');
+  svg.appendChild(pc);
+
+  // Labels
+  orient.forEach((_,i)=>{
+    const a=ang(i), d=r+18;
+    const t=document.createElementNS(ns,'text');
+    t.setAttribute('x',cx+d*Math.cos(a));t.setAttribute('y',cy+d*Math.sin(a));
+    t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family','DM Mono, monospace');t.setAttribute('font-size','8.5');
+    t.setAttribute('fill','rgba(248,227,140,0.65)');
+    t.textContent=EIXOS[i].toUpperCase();
+    svg.appendChild(t);
+  });
+}
+
+// Init
+ir('intro');
+</script>
+</body>
+</html>
