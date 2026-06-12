@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Você usa a riqueza — ou é usado por ela?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --verde:#1A3C2E;--vm:#2E5C46;
+  --d:#f8e38c;--de:#d7ae4d;
+  --b:#FAFAF8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;scroll-behavior:smooth;}
+body{
+  background:var(--verde);color:#FFFFFF;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:20px;line-height:1.75;
+  min-height:100vh;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 80% 10%,rgba(248,227,140,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 60% at 10% 90%,rgba(26,60,46,.7) 0%,transparent 55%);
+  pointer-events:none;
+}
+
+.w{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 2.8rem;width:100%;}
+
+/* TELAS */
+.tela{display:none;min-height:100vh;flex-direction:column;justify-content:center;padding:5rem 0 4rem;}
+.tela.on{display:flex;}
+#t-resultado.on{display:block;padding:5rem 0 6rem;}
+#t-completo.on{display:block;padding:4rem 0 6rem;}
+
+/* BOTÃO */
+.btn{
+  display:inline-block;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:16px;font-weight:500;letter-spacing:3px;text-transform:uppercase;
+  padding:18px 44px;border:1.5px solid var(--d);color:var(--d);
+  background:transparent;transition:background .2s,color .2s;text-decoration:none;
+}
+.btn:hover,.btn.s{background:var(--d);color:var(--verde);}
+
+/* FORM */
+.fl{margin-bottom:18px;}
+.fl label{
+  display:block;font-family:'DM Mono',monospace;
+  font-size:16px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--de);margin-bottom:8px;font-weight:500;
+}
+.fl input{
+  display:block;width:100%;padding:14px 16px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(248,227,140,.4);
+  color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:20px;outline:none;transition:border-color .2s,background .2s;
+}
+.fl input::placeholder{color:rgba(255,255,255,.4)!important;-webkit-text-fill-color:rgba(255,255,255,.4)!important;}
+.fl input:focus{border-color:var(--d);background:rgba(255,255,255,.14);}
+.erro{font-family:'DM Mono',monospace;font-size:16px;color:#ff9999;margin-top:6px;display:none;}
+
+/* QUIZ */
+.prog{width:100%;height:2px;background:rgba(248,227,140,.15);margin-bottom:3rem;position:relative;overflow:hidden;}
+.prog-f{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--de),var(--d));transition:width .5s ease;}
+
+.contador{font-family:'DM Mono',monospace;font-size:16px;letter-spacing:2px;color:rgba(255,255,255,.90);margin-bottom:8px;}
+
+.reflexao{
+  font-size:clamp(22px,4.5vw,34px);
+  font-weight:300;font-style:italic;
+  line-height:1.35;color:#FFFFFF;margin-bottom:2rem;
+}
+
+.ops{display:flex;flex-direction:column;gap:8px;}
+.op{
+  padding:16px 20px;
+  border:1px solid rgba(248,227,140,.2);
+  background:rgba(255,255,255,.04);
+  cursor:pointer;font-size:20px;color:#FFFFFF;
+  text-align:left;line-height:1.5;
+  transition:border-color .18s,background .18s;position:relative;
+}
+.op:hover{border-color:rgba(248,227,140,.48);background:rgba(248,227,140,.08);}
+.op.sel{border-color:var(--d);background:rgba(248,227,140,.12);}
+.op.sel::after{content:'✓';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:16px;color:var(--d);}
+
+.nav{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+.bn{font-family:'DM Mono',monospace;font-size:16px;letter-spacing:2px;text-transform:uppercase;padding:12px 24px;border:1px solid;cursor:pointer;transition:all .18s;}
+.bp{border-color:var(--d);color:var(--d);background:transparent;}
+.bp:disabled{opacity:.22;cursor:not-allowed;}
+.ba{border-color:rgba(255,255,255,.85);color:#FFFFFF;background:transparent;}
+.ba:hover{border-color:#FFFFFF;color:#FFFFFF;}
+
+/* RESULTADO PARCIAL */
+.perfil-nome{
+  font-size:clamp(42px,8vw,72px);
+  font-weight:600;font-style:italic;
+  color:var(--d);line-height:1.05;
+  margin-bottom:6px;word-break:break-word;
+}
+.perfil-sub{font-size:18px;color:rgba(255,255,255,.90);font-style:italic;margin-bottom:2.5rem;}
+
+/* A FRASE — coração do produto */
+.frase-produto{
+  font-size:clamp(20px,3.5vw,28px);
+  font-weight:300;font-style:italic;
+  color:#FFFFFF;line-height:1.5;
+  margin-bottom:3.5rem;
+  padding-bottom:2.5rem;
+  border-bottom:1px solid rgba(248,227,140,.15);
+}
+
+/* BLUR — resultado bloqueado */
+.blur-wrap{position:relative;margin-bottom:2rem;}
+.blur-content{
+  filter:blur(6px);
+  user-select:none;pointer-events:none;
+  opacity:.6;
+}
+.blur-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:1.2rem;
+  background:rgba(26,60,46,.3);
+}
+.blur-texto{
+  font-size:18px;font-style:italic;
+  color:#FFFFFF;text-align:center;
+  max-width:340px;line-height:1.6;
+}
+
+/* CAPTURA */
+.cap-titulo{
+  font-size:clamp(24px,4vw,34px);
+  font-weight:300;font-style:italic;
+  color:#FFFFFF;margin-bottom:10px;line-height:1.3;
+}
+.cap-sub{font-size:18px;color:rgba(255,255,255,.8);margin-bottom:2rem;line-height:1.7;}
+
+/* RESULTADO COMPLETO */
+.linha-ancora{
+  font-size:clamp(18px,2.5vw,22px);
+  font-style:italic;color:rgba(255,255,255,.88);
+  line-height:1.7;margin-bottom:2rem;
+}
+
+.silencio{
+  padding:2.5rem 0;
+  border-top:1px solid rgba(248,227,140,.12);
+  border-bottom:1px solid rgba(248,227,140,.12);
+  margin-bottom:3rem;
+}
+.s-crenca{font-size:20px;color:rgba(255,255,255,.88);font-style:italic;margin-bottom:1rem;line-height:1.6;}
+.s-pergunta{font-size:clamp(20px,3.2vw,26px);font-weight:300;font-style:italic;color:#FFFFFF;line-height:1.45;}
+
+.ivcp-wrap{margin-bottom:4rem;}
+.ivcp-wrap p{font-size:20px;color:rgba(255,255,255,.90);margin-bottom:1.2rem;line-height:1.7;font-style:italic;}
+
+.ass{padding-top:2rem;border-top:1px solid rgba(248,227,140,.1);text-align:center;}
+.ass p{font-family:'DM Mono',monospace;font-size:16px;color:rgba(255,255,255,.82);letter-spacing:2px;margin-bottom:6px;}
+.ass a{color:var(--de);text-decoration:none;}
+
+@keyframes up{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.fi{animation:up .5s ease both;}
+
+@media(max-width:540px){
+  .w{padding:0 1.6rem;}
+  .nav{flex-direction:column;}
+  .bn{width:100%;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- T1: ABERTURA -->
+<div id="t-intro" class="tela on">
+<div class="w fi">
+  <p style="font-family:'DM Mono',monospace;font-size:16px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:2.2rem;">Método VIDA · Ivan Vianna CFP®</p>
+
+  <h1 style="font-size:clamp(32px,6.5vw,60px);font-weight:300;font-style:italic;line-height:1.15;margin-bottom:1.8rem;">
+    Você usa a riqueza —<br>
+    ou é <span style="color:var(--d);font-weight:600;">usado</span> por ela?
+  </h1>
+
+  <p style="font-size:20px;color:#FFFFFF;line-height:1.8;margin-bottom:.8rem;">
+    Descubra sua relação com dinheiro, liberdade e propósito.
+  </p>
+  <p style="font-size:18px;color:rgba(255,255,255,.90);line-height:1.8;margin-bottom:3rem;">
+    6 reflexões. 4 minutos. Série Semântica da Riqueza.
+  </p>
+
+  <button class="btn s" onclick="ir('quiz');renderQ();">Começar</button>
+
+  <p style="font-family:'DM Mono',monospace;font-size:16px;color:rgba(255,255,255,.90);font-size:16px;margin-top:2.5rem;letter-spacing:2px;text-transform:uppercase;">
+    IVRR™ · Uma experiência para revelar a história que você está contando através do dinheiro
+  </p>
+</div>
+</div>
+
+<!-- T2: QUIZ -->
+<div id="t-quiz" class="tela" style="padding:4rem 0;">
+<div class="w">
+  <div class="prog"><div class="prog-f" id="pf"></div></div>
+  <div id="qb" class="fi"></div>
+</div>
+</div>
+
+<!-- T3: RESULTADO PARCIAL (sem captura) -->
+<div id="t-resultado" class="tela">
+<div class="w">
+
+  <!-- A FRASE PRIMEIRO — produto real, antes da classificação -->
+  <p class="frase-produto fi" id="r-frase"></p>
+
+  <p style="font-family:'DM Mono',monospace;font-size:16px;letter-spacing:3px;text-transform:uppercase;color:var(--de);margin-bottom:10px;margin-top:2rem;" id="r-label"></p>
+  <h2 class="perfil-nome fi" id="r-nome"></h2>
+  <p class="perfil-sub fi" id="r-sub"></p>
+
+  <!-- BLUR: resultado completo bloqueado -->
+  <div class="blur-wrap fi">
+    <div class="blur-content" id="blur-preview">
+      <p style="font-size:18px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:1rem;">Sua análise completa revela onde sua orientação e sua estrutura se alinham — e onde existe um gap que você provavelmente ainda não nomeou.</p>
+      <p style="font-size:18px;color:rgba(255,255,255,.5);font-style:italic;line-height:1.7;">Existe uma diferença entre o que você acredita sobre riqueza e o que efetivamente construiu...</p>
+    </div>
+    <div class="blur-overlay">
+      <p class="blur-texto">Quer descobrir o que isso significa para você?</p>
+      <button class="btn s" onclick="ir('captura')">Sim, quero ver →</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- T4: CAPTURA (após curiosidade criada) -->
+<div id="t-captura" class="tela">
+<div class="w fi">
+  <p style="font-family:'DM Mono',monospace;font-size:16px;letter-spacing:3px;text-transform:uppercase;color:var(--de);margin-bottom:1.4rem;">Quase lá</p>
+
+  <h2 class="cap-titulo">Onde enviar sua análise completa?</h2>
+  <p class="cap-sub">Seu resultado aparece imediatamente na tela.</p>
+
+  <div class="fl">
+    <label for="i-nome">Nome</label>
+    <input type="text" id="i-nome" placeholder="Como prefere ser chamado" autocomplete="given-name" oninput="validarF()">
+    <p class="erro" id="e-nome">Preencha seu nome</p>
+  </div>
+  <div class="fl">
+    <label for="i-email">E-mail</label>
+    <input type="email" id="i-email" placeholder="seu@email.com" autocomplete="email" oninput="validarF()">
+    <p class="erro" id="e-email">E-mail inválido</p>
+  </div>
+  <div class="fl">
+    <label for="i-wa">WhatsApp <span style="color:rgba(255,255,255,.42);font-size:16px;font-family:'DM Mono',monospace;text-transform:none;letter-spacing:0;">(opcional)</span></label>
+    <input type="tel" id="i-wa" placeholder="(11) 99999-9999" autocomplete="tel" oninput="fmtWA(this);validarF();">
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center;">
+    <button class="btn s" id="btn-ver" onclick="verCompleto()" disabled style="opacity:.3;cursor:not-allowed;transition:opacity .2s;">Ver minha análise completa →</button>
+  </div>
+
+  <p style="font-family:'DM Mono',monospace;font-size:16px;color:rgba(255,255,255,.78);font-size:16px;margin-top:16px;line-height:1.6;letter-spacing:1px;">
+    Sem spam. Dados usados exclusivamente para envio do resultado.
+  </p>
+</div>
+</div>
+
+<!-- T5: RESULTADO COMPLETO -->
+<div id="t-completo" class="tela">
+<div class="w">
+
+  <!-- FRASE PRIMEIRO -->
+  <p class="frase-produto fi" id="rc-frase"></p>
+
+  <p style="font-family:'DM Mono',monospace;font-size:16px;letter-spacing:3px;text-transform:uppercase;color:var(--de);margin-bottom:10px;margin-top:2rem;" id="rc-label"></p>
+  <h2 class="perfil-nome fi" id="rc-nome"></h2>
+  <p class="perfil-sub fi" id="rc-sub"></p>
+
+  <p class="linha-ancora fi" id="rc-ancora"></p>
+
+  <div class="silencio fi">
+    <p class="s-crenca" id="rc-crenca"></p>
+    <p class="s-pergunta">Seu patrimônio conta a mesma história que você?</p>
+  </div>
+
+  <div class="ivcp-wrap fi">
+    <p id="rc-ivcp"></p>
+    <a href="https://ivanlvianna.github.io/indicevidacontinuidadepatrimonial/ivcp-landing.html" class="btn s" target="_blank">Medir a distância entre crença e patrimônio →</a>
+    <p style="font-family:'DM Mono',monospace;font-size:16px;color:rgba(255,255,255,.78);margin-top:14px;letter-spacing:2px;text-transform:uppercase;">IVCP™ · Índice VIDA de Coerência Patrimonial</p>
+  </div>
+
+  <div class="ass fi">
+    <p>Ivan Vianna · CFP® · Planejador financeiro · Arquiteto de patrimônio</p>
+    <p>CNPJ 56.099.913/0001-61 · <a href="https://ivanviannafinancas.com.br">ivanviannafinancas.com.br</a></p>
+    <p style="margin-top:6px;opacity:.75;">IVRR™ · Método VIDA · © Ivan Vianna Finanças Pessoais e Empresariais</p>
+  </div>
+
+</div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsVpO_OoWVjENJyDP2MCY-wGNqSnuz1oc6txaATRksQNRJCwrOaJaKlGzv2bQQI0I/exec';
+
+const QS = [
+  {
+    texto:'Se tudo o que você possui desaparecesse amanhã, o que permaneceria?',
+    ops:[
+      ['Muito pouco. O que tenho é grande parte do que sou.',              [{i:0,v:1}]],
+      ['Minha história — mas perderia muito da minha posição e segurança.',  [{i:0,v:2}]],
+      ['Minha essência. O patrimônio é importante, mas não me define.',    [{i:0,v:3}]],
+      ['Tudo o que realmente importa. Bens são instrumentos, não identidade.',[{i:0,v:4}]],
+    ]
+  },
+  {
+    texto:'Seu dinheiro, hoje, te dá mais liberdade — ou mais medo de perdê-lo?',
+    ops:[
+      ['Mais medo. Nunca parece suficiente para me sentir seguro.',        [{i:1,v:1}]],
+      ['Os dois. Tenho conforto, mas também dependência do padrão.',       [{i:1,v:2}]],
+      ['Mais liberdade — consigo dizer não em boa parte das situações.',   [{i:1,v:3}]],
+      ['Liberdade real. Minhas decisões são guiadas por propósito, não por necessidade.',[{i:1,v:4}]],
+    ]
+  },
+  {
+    texto:'Quando um recurso extra chega, seu primeiro movimento é protegê-lo ou colocá-lo em movimento?',
+    ops:[
+      ['Proteger. Guardar antes de qualquer outra coisa.',                 [{i:2,v:1},{i:3,v:1}]],
+      ['Proteger primeiro, investir se sobrar.',                           [{i:2,v:2},{i:3,v:2}]],
+      ['Avaliar onde gera mais crescimento — para mim e para o que construo.',[{i:2,v:3},{i:3,v:3}]],
+      ['Colocá-lo em movimento. Recurso parado perde sentido.',            [{i:2,v:4},{i:3,v:4}]],
+    ]
+  },
+  {
+    texto:'Para onde flui o que você gera, além de você mesmo?',
+    ops:[
+      ['Quase tudo fica em mim — proteção e segurança pessoal.',           [{i:3,v:1}]],
+      ['Para minha família direta. É onde termina minha responsabilidade.', [{i:3,v:2}]],
+      ['Às vezes para além da família — quando surge a oportunidade.',     [{i:3,v:3}]],
+      ['Para projetos e pessoas com critério. Faço isso de forma intencional.',[{i:3,v:4}]],
+    ]
+  },
+  {
+    texto:'O que você está construindo agora teria vida própria sem a sua presença?',
+    ops:[
+      ['Não. Depende completamente de mim para funcionar.',                [{i:4,v:1}]],
+      ['Em parte. Há bases, mas o projeto depende demais de mim.',         [{i:4,v:2}]],
+      ['Sim, com esforço. As bases existem, mas falta formalização.',      [{i:4,v:3}]],
+      ['Sim. Há documentos, conversas feitas e pessoas preparadas.',      [{i:4,v:4}]],
+    ]
+  },
+  {
+    texto:'O que você quer que sobreviva a você?',
+    ops:[
+      ['Que minha família tenha recursos suficientes para viver bem.',     [{i:4,v:1},{i:0,v:2}]],
+      ['Que o patrimônio seja preservado e não se dissipe.',              [{i:4,v:2},{i:3,v:1}]],
+      ['Que os valores que construí continuem influenciando quem fica.',  [{i:4,v:3},{i:0,v:3}]],
+      ['Que o que criei continue gerando vida e desenvolvimento além de mim.',[{i:4,v:4},{i:3,v:4}]],
+    ]
+  },
+];
+
+const PERFIS = [
+  {
+    min:0,max:29,
+    nome:'O Guardião',
+    sub:'Sua relação com a riqueza é antes de tudo protetora.',
+    frase:'Você construiu riqueza para se proteger. Mas quem protege a riqueza de você?',
+    ancora:'Proteção é o começo da sabedoria patrimonial. Não o fim.',
+    crenca:'Você acredita que riqueza existe para proteger.',
+    ivcp:'Existe uma distância entre quem você se tornou e o patrimônio que construiu. O IVCP™ mede essa distância.',
+  },
+  {
+    min:30,max:49,
+    nome:'O Construtor',
+    sub:'Você construiu muito. E começou a perceber que construir não é o mesmo que perpetuar.',
+    frase:'Você passou tanto tempo construindo que ainda não parou para perguntar o que tudo isso está construindo em você.',
+    ancora:'Você se tornou inseparável do que construiu.',
+    crenca:'Você acredita que riqueza existe para ser construída.',
+    ivcp:'Existe uma distância entre quem você se tornou e o patrimônio que construiu. O IVCP™ mede essa distância.',
+  },
+  {
+    min:50,max:67,
+    nome:'O Buscador',
+    sub:'Você está em transição — e esse é o momento mais valioso.',
+    frase:'A clareza chegou. A coragem de agir sobre ela ainda não.',
+    ancora:'A consciência chegou. A ação ainda não acompanhou.',
+    crenca:'Você acredita que riqueza existe para mais do que acumular.',
+    ivcp:'Existe uma distância entre quem você se tornou e o patrimônio que construiu. O IVCP™ mede essa distância.',
+  },
+  {
+    min:68,max:83,
+    nome:'O Transformador',
+    sub:'Você não vê riqueza como posse. Vê como ferramenta.',
+    frase:'Você sabe fazer crescer. Ainda não construiu o que sobrevive à sua ausência.',
+    ancora:'Você é excepcional em fazer crescer o que está fora de você. O que está dentro ainda não virou projeto.',
+    crenca:'Você acredita que riqueza existe para gerar desenvolvimento.',
+    ivcp:'Existe uma distância entre quem você se tornou e o patrimônio que construiu. O IVCP™ mede essa distância.',
+  },
+  {
+    min:84,max:100,
+    nome:'O Integrador',
+    sub:'Riqueza, propósito e continuidade — para você, são a mesma coisa.',
+    frase:'A maioria das perguntas sobre dinheiro você já respondeu. O que ficou são as perguntas que o dinheiro não responde.',
+    ancora:'Você chegou onde poucos chegam. E descobriu que lá também não tem manual.',
+    crenca:'Você acredita que riqueza existe para gerar vida muito além de si mesmo.',
+    ivcp:'Existe uma distância entre quem você se tornou e o patrimônio que construiu. O IVCP™ mede essa distância.',
+  },
+];
+
+const EIXOS=['Identidade','Liberdade','Produtividade','Circulação','Continuidade'];
+let atual=0, resps=new Array(QS.length).fill(null), lead={}, perfAtual=null, notaAtual=[];
+
+function ir(id){
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('on'));
+  document.getElementById('t-'+id).classList.add('on');
+  window.scrollTo(0,0);
+}
+
+function renderQ(){
+  document.getElementById('pf').style.width=((atual/QS.length)*100)+'%';
+  const qb=document.getElementById('qb');
+  qb.classList.remove('fi');void qb.offsetWidth;qb.classList.add('fi');
+  const q=QS[atual];
+  qb.innerHTML=`
+    <p class="contador">${atual+1} de ${QS.length}</p>
+    <p class="reflexao">${q.texto}</p>
+    <div class="ops">${q.ops.map((o,i)=>`
+      <button class="op${resps[atual]===i?' sel':''}" onclick="sel(${i})">${o[0]}</button>`).join('')}
+    </div>
+    <div class="nav">
+      ${atual>0?`<button class="bn ba" onclick="nav(-1)">← Anterior</button>`:''}
+      <button class="bn bp" id="bnp" ${resps[atual]===null?'disabled':''} onclick="nav(1)">
+        ${atual===QS.length-1?'Ver resultado →':'Continuar →'}
+      </button>
+    </div>`;
+}
+
+function sel(i){
+  resps[atual]=i;
+  document.querySelectorAll('.op').forEach((b,j)=>b.classList.toggle('sel',j===i));
+  document.getElementById('bnp').disabled=false;
+}
+
+function nav(d){
+  const n=atual+d;
+  if(n<0)return;
+  if(n>=QS.length){calcular();return;}
+  atual=n;renderQ();
+}
+
+function calcular(){
+  const soma=[0,0,0,0,0],cnt=[0,0,0,0,0];
+  QS.forEach((q,qi)=>{
+    if(resps[qi]===null)return;
+    q.ops[resps[qi]][1].forEach(({i,v})=>{soma[i]+=v;cnt[i]++;});
+  });
+  notaAtual=soma.map((s,i)=>cnt[i]?Math.round(((s/cnt[i])-1)/3*100):50);
+  const global=Math.round(notaAtual.reduce((a,b)=>a+b)/5);
+  perfAtual=PERFIS.find(x=>global>=x.min&&global<=x.max)||PERFIS[2];
+  ir('resultado');renderParcial();
+}
+
+function renderParcial(){
+  const p=perfAtual;
+  document.getElementById('r-label').textContent='Seu perfil · IVRR™';
+  document.getElementById('r-nome').textContent=p.nome;
+  document.getElementById('r-sub').textContent=p.sub;
+  document.getElementById('r-frase').textContent=p.frase;
+}
+
+/* VALIDAÇÃO CAPTURA */
+function validarEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
+
+function fmtWA(input){
+  let v=input.value.replace(/\D/g,'');
+  if(v.length>11)v=v.slice(0,11);
+  if(v.length>6)v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length>0)v='('+v;
+  input.value=v;
+}
+
+function validarF(){
+  const nome=document.getElementById('i-nome').value.trim();
+  const email=document.getElementById('i-email').value.trim();
+  const btn=document.getElementById('btn-ver');
+  const ok=nome.length>=2&&validarEmail(email);
+  btn.disabled=!ok;
+  btn.style.opacity=ok?'1':'0.3';
+  btn.style.cursor=ok?'pointer':'not-allowed';
+  const en=document.getElementById('e-nome');
+  const ee=document.getElementById('e-email');
+  en.style.display=(nome.length>0&&nome.length<2)?'block':'none';
+  ee.style.display=(email.length>0&&!validarEmail(email))?'block':'none';
+}
+
+function verCompleto(){
+  const nome=document.getElementById('i-nome').value.trim();
+  const email=document.getElementById('i-email').value.trim();
+  if(!nome||nome.length<2){document.getElementById('e-nome').style.display='block';return;}
+  if(!validarEmail(email)){document.getElementById('e-email').style.display='block';return;}
+  lead={nome,email,wa:document.getElementById('i-wa').value.trim()};
+  ir('completo');renderCompleto();
+  enviarLead();
+}
+
+function renderCompleto(){
+  const p=perfAtual;
+  document.getElementById('rc-label').textContent=lead.nome+' · IVRR™';
+  document.getElementById('rc-nome').textContent=p.nome;
+  document.getElementById('rc-sub').textContent=p.sub;
+  document.getElementById('rc-frase').textContent=p.frase;
+  document.getElementById('rc-ancora').textContent=p.ancora;
+  document.getElementById('rc-crenca').textContent=p.crenca;
+  document.getElementById('rc-ivcp').textContent=p.ivcp;
+}
+
+function enviarLead(){
+  if(!SCRIPT_URL||SCRIPT_URL.includes('COLE_AQUI'))return;
+  fetch(SCRIPT_URL,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      produto:'IVRR',
+      nome:lead.nome,email:lead.email,wa:lead.wa||'',
+      perfil:perfAtual.nome,eixos:notaAtual
+    })
+  }).catch(err=>console.warn('IVRR:',err));
+}
+
+ir('intro');
+</script>
+</body>
+</html>
